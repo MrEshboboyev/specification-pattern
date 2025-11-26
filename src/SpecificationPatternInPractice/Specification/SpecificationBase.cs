@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+﻿﻿using System.Linq.Expressions;
 
 namespace SpecificationPatternInPractice.Specification;
 
@@ -10,5 +10,12 @@ public abstract class SpecificationBase<T> : ISpecification<T>
     {
         var predicate = AsExpression().Compile();
         return predicate(entity);
+    }
+
+    public virtual async Task<bool> IsSatisfiedByAsync(
+        T entity,
+        CancellationToken cancellationToken = default)
+    {
+        return await Task.Run(() => IsSatisfiedBy(entity), cancellationToken);
     }
 }

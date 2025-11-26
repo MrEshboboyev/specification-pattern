@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+﻿﻿using System.Linq.Expressions;
 
 namespace SpecificationPatternInPractice.Specification;
 
@@ -20,5 +20,14 @@ public class AndSpecification<T>(
         );
         
         return Expression.Lambda<Func<T, bool>>(body, parameter);
+    }
+
+    public override async Task<bool> IsSatisfiedByAsync(
+        T entity, 
+        CancellationToken cancellationToken = default)
+    {
+        var leftResult = await left.IsSatisfiedByAsync(entity, cancellationToken);
+        if (!leftResult) return false; // Short-circuit evaluation
+        return await right.IsSatisfiedByAsync(entity, cancellationToken);
     }
 }
